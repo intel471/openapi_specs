@@ -1,0 +1,604 @@
+openapi: 3.0.0
+info:
+  title: Titan API v1
+  description: Threat actors lookup API. Returns information about threat actors, associated reports and underground forum activity.
+  version: 1.19.7
+servers:
+  - url: https://api.intel471.com/v1
+    description: "Production server."
+paths:
+  /actors:
+    get:
+      operationId: Search Threat Actors
+      summary: Search Threat Actors
+      description: "Get a list of threat actors, associated reports and underground forum activity matching filter criteria"
+      parameters:
+        - name: actor
+          in: query
+          description: Search for handles only. At least one of `actor`, `forum` parameter is required.
+          required: false
+          schema:
+            type: string
+          example: synthx
+        - name: forum
+          in: query
+          description: Search for actors active on given forum.
+          required: false
+          schema:
+            type: string
+          example: 0day
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - actorTotalCount
+                properties:
+                  actorTotalCount:
+                    type: integer
+                    description: Total count of matched actors.
+                  actorPartialResult:
+                    type: boolean
+                    description: Indicates whether response contains partial result. It could be in case when request took too long and was terminated by timeout.
+                  actors:
+                    type: array
+                    description: List of `Actors`.
+                    items:
+                      type: object
+                      required:
+                        - uid
+                        - links
+                      properties:
+                        uid:
+                          type: string
+                          description: Unique actor identifier.
+                        handles:
+                          type: array
+                          description: "List of actor's `handles`."
+                          items:
+                            type: string
+                        links:
+                          type: object
+                          description: Linked data
+                          required:
+                            - forumTotalCount
+                            - forumPrivateMessageTotalCount
+                            - forumPostTotalCount
+                            - reportTotalCount
+                            - instantMessageServerTotalCount
+                            - instantMessageChannelTotalCount
+                            - instantMessageTotalCount
+                          properties:
+                            forumTotalCount:
+                              type: integer
+                              description: Total count of linked forums.
+                            forumPrivateMessageTotalCount:
+                              type: integer
+                              description: Total count of linked private messages.
+                            forumPostTotalCount:
+                              type: integer
+                              description: Total count of linked posts.
+                            reportTotalCount:
+                              type: integer
+                              description: Total count of linked reports.
+                            instantMessageServerTotalCount:
+                              type: integer
+                              description: Total count of linked instant messaging servers.
+                            instantMessageChannelTotalCount:
+                              type: integer
+                              description: Total count of instant messaging channels of particular server actor participated in.
+                            instantMessageTotalCount:
+                              type: integer
+                              description: Total count of instant messages actor has written on particular server.
+                            instantMessageServers:
+                              type: array
+                              description: Linked instant messaging servers.
+                              items:
+                                type: object
+                                required:
+                                  - uid
+                                  - serviceType
+                                properties:
+                                  uid:
+                                    type: string
+                                    description: Unique IM server identifier.
+                                  serviceType:
+                                    type: string
+                                    description: Type of IM service (Telegram, Discord, IRC etc.).
+                                  name:
+                                    type: string
+                                    description: IM server name.
+                            forums:
+                              type: array
+                              description: Linked forums.
+                              items:
+                                type: object
+                                required:
+                                  - uid
+                                  - name
+                                properties:
+                                  uid:
+                                    type: string
+                                    description: Unique forum identifier.
+                                  name:
+                                    type: string
+                                    description: Forum `name`.
+                                  actorHandle:
+                                    type: string
+                                    description: Actor handle.
+                                  timeZone:
+                                    type: string
+                                    description: "`Timezone`."
+                                  contactInfo:
+                                    type: array
+                                    description: "`Contact Info` objects."
+                                    items:
+                                      type: object
+                                      required:
+                                        - type
+                                        - value
+                                      properties:
+                                        type:
+                                          type: string
+                                          description: "Contact info `type`. Possible values: `EmailAddress`, `ICQ`, `Jabber`, `MSN`, `YahooIM`, `AIM`, `Skype`, `QQ`, `BitcoinAddress`."
+                                        value:
+                                          type: string
+                                          description: Contact info `value`.
+                            reports:
+                              type: array
+                              description: "Linked reports. Array of simplified version of one of the following: `Information Report`, `Fintel Report`, `Malware Report`, `Spot Report`, `Situation Report`, `Breach Alert`."
+                              items:
+                                type: object
+                                required:
+                                  - uid
+                                  - subject
+                                  - portalReportUrl
+                                properties:
+                                  uid:
+                                    type: string
+                                    description: Unique report identifier.
+                                  documentFamily:
+                                    type: string
+                                    description: Document family.
+                                  documentType:
+                                    type: string
+                                    description: Document type.
+                                  admiraltyCode:
+                                    type: string
+                                    pattern: '^[A-F][1-6]$'
+                                    description: "Code as described [here](http://en.wikipedia.org/wiki/Admiralty_code). All Fintel reports have admiraltyCode=`A1`."
+                                  motivation:
+                                    type: array
+                                    description: Actor's `motivation`. CC for Cyber Crime, CE for Cyber Espionage, HA for Hacktivism.
+                                    items:
+                                      type: string
+                                  subject:
+                                    type: string
+                                    description: Report's `subject`.
+                                  created:
+                                    type: integer
+                                    format: int64
+                                    description: Date the report was `created` as Epoch Time.
+                                  released:
+                                    type: integer
+                                    format: int64
+                                    description: Date the report was `released` as Epoch Time.
+                                  lastUpdated:
+                                    type: integer
+                                    format: int64
+                                    description: Last modification date as Epoch Time.
+                                  dateOfInformation:
+                                    type: integer
+                                    format: int64
+                                    description: Date of information as Epoch Time.
+                                  sourceCharacterization:
+                                    type: string
+                                    description: Source characterization.
+                                  portalReportUrl:
+                                    type: string
+                                    description: URL to the report on the portal.
+                                  tags:
+                                    type: array
+                                    description: Report's assigned `tags`.
+                                    items:
+                                      type: string
+                                  relatedReports:
+                                    type: array
+                                    description: List of related reports.
+                                    items:
+                                      type: object
+                                      required:
+                                        - uid
+                                        - documentFamily
+                                      properties:
+                                        uid:
+                                          type: string
+                                          description: Related report unique identifier.
+                                        documentFamily:
+                                          type: string
+                                          description: Related report document family.
+                                  entities:
+                                    type: array
+                                    description: List of entities.
+                                    items:
+                                      type: object
+                                      required:
+                                        - type
+                                      properties:
+                                        type:
+                                          type: string
+                                          description: Entity `type`.
+                                        value:
+                                          type: string
+                                          description: Entity `value`.
+                                  locations:
+                                    type: array
+                                    description: Report `locations`.
+                                    items:
+                                      type: object
+                                      required:
+                                        - region
+                                        - link
+                                      properties:
+                                        region:
+                                          type: string
+                                          description: Name of `region`.
+                                        country:
+                                          type: string
+                                          description: Name of `country`.
+                                        link:
+                                          type: string
+                                          description: Linkage type.
+                                  actorHandle:
+                                    type: string
+                                    description: Actor's handle
+                                  actorSubjectOfReport:
+                                    type: array
+                                    description: List of actors mentioned in report subject.
+                                    items:
+                                      type: object
+                                      required:
+                                        - handle
+                                      properties:
+                                        handle:
+                                          type: string
+                                          description: Actor `handle`.
+                                        aliases:
+                                          type: array
+                                          description: Actor `aliases` (also known as).
+                                          items:
+                                            type: string
+                                  reportAttachments:
+                                    type: array
+                                    description: List of report attachments.
+                                    items:
+                                      type: object
+                                      required:
+                                        - fileName
+                                        - url
+                                        - fileSize
+                                        - mimeType
+                                      properties:
+                                        fileName:
+                                          type: string
+                                          description: Attachment file's name.
+                                        url:
+                                          type: string
+                                          description: "`Url` to download attachment."
+                                        fileSize:
+                                          type: integer
+                                          description: Attachment file size in bytes.
+                                        mimeType:
+                                          type: string
+                                          description: Mime type.
+                                        description:
+                                          type: string
+                                          description: A `description` of attachment.
+                                        malicious:
+                                          type: boolean
+                                          description: Indicates if attachment is `malicious`. If malicious=`true`, attachment will be an archive with password `infected`.
+                                  victims:
+                                    type: array
+                                    description: Purported victims list.
+                                    items:
+                                      type: object
+                                      required:
+                                        - name
+                                      properties:
+                                        name:
+                                          type: string
+                                          description: Purported victim `name`.
+                                        urls:
+                                          type: array
+                                          description: List of purported victim's `urls`.
+                                          items:
+                                            type: string
+                                  sensitiveSource:
+                                    type: boolean
+                                    description: Indicates if the document contains sensitive source derived information.
+                                  sources:
+                                    type: array
+                                    description: List of `sources`.
+                                    items:
+                                      type: object
+                                      required:
+                                        - url
+                                        - title
+                                        - index
+                                      properties:
+                                        url:
+                                          type: string
+                                          description: "`Url` to resource where the report information came from."
+                                        title:
+                                          type: string
+                                          description: Source `title`.
+                                        index:
+                                          type: integer
+                                          description: Numerical value that the source is denoted by in the text of the report.
+                                        type:
+                                          type: string
+                                          description: "`Type` of source such as Thread Post, Information Report, etc."
+                                  classification:
+                                    type: object
+                                    description: Classification of reports.
+                                    properties:
+                                      intelRequirements:
+                                        type: array
+                                        description: General Intel Requirements (GIR).
+                                        items:
+                                          type: string
+                        activeFrom:
+                          type: integer
+                          format: int64
+                          description: Date first seen.
+                        activeUntil:
+                          type: integer
+                          format: int64
+                          description: Date last seen.
+                        lastUpdated:
+                          type: integer
+                          format: int64
+                          description: Last modification date.
+
+        '401':
+          description: Unauthorized
+        '412':
+          description: Precondition Failed
+  /reports:
+    get:
+      operationId: Search Threat Actors in Reports
+      summary: Search Threat Actors in Reports
+      description: Get a list of Information or FINTEL reports discussing threat actor's activity
+      parameters:
+        - name: report
+          in: query
+          schema:
+            type: string
+            example: "ransomware-as-a-service"
+          description: Look up threat actor's handle in reports body
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - reportTotalCount
+                properties:
+                  reportTotalCount:
+                    type: integer
+                    description: Total count of matched reports.
+                  reportPartialResult:
+                    type: boolean
+                    description: Indicates whether response contains partial result. It could be in case when request took too long and was terminated by timeout.
+                  reports:
+                    type: array
+                    description: "List of Information Reports or Fintel Reports excluding researcherComments, rawText, rawTextTranslated fields."
+                    items:
+                      type: object
+                      required:
+                        - uid
+                        - subject
+                        - portalReportUrl
+                      properties:
+                        uid:
+                          type: string
+                          description: Unique report identifier.
+                        documentFamily:
+                          type: string
+                          description: Document family.
+                        documentType:
+                          type: string
+                          description: Document type.
+                        admiraltyCode:
+                          type: string
+                          pattern: '^[A-F][1-6]$'
+                          description: "Code as described [here](http://en.wikipedia.org/wiki/Admiralty_code). All Fintel reports have admiraltyCode=`A1`."
+                        motivation:
+                          type: array
+                          description: Actor's `motivation`. CC for Cyber Crime, CE for Cyber Espionage, HA for Hacktivism.
+                          items:
+                            type: string
+                        subject:
+                          type: string
+                          description: Report's `subject`.
+                        created:
+                          type: integer
+                          format: int64
+                          description: Date the report was `created` as Epoch Time.
+                        released:
+                          type: integer
+                          format: int64
+                          description: Date the report was `released` as Epoch Time.
+                        lastUpdated:
+                          type: integer
+                          format: int64
+                          description: Last modification date as Epoch Time.
+                        dateOfInformation:
+                          type: integer
+                          format: int64
+                          description: Date of information as Epoch Time.
+                        sourceCharacterization:
+                          type: string
+                          description: Source characterization.
+                        portalReportUrl:
+                          type: string
+                          description: URL to the report on the portal.
+                        tags:
+                          type: array
+                          description: Report's assigned `tags`.
+                          items:
+                            type: string
+                        relatedReports:
+                          type: array
+                          description: List of related reports.
+                          items:
+                            type: object
+                            required:
+                              - uid
+                              - documentFamily
+                            properties:
+                              uid:
+                                type: string
+                                description: Related report unique identifier.
+                              documentFamily:
+                                type: string
+                                description: Related report document family.
+                        entities:
+                          type: array
+                          description: List of entities.
+                          items:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                description: Entity `type`.
+                              value:
+                                type: string
+                                description: Entity `value`.
+                        locations:
+                          type: array
+                          description: Report `locations`.
+                          items:
+                            type: object
+                            required:
+                              - region
+                              - link
+                            properties:
+                              region:
+                                type: string
+                                description: Name of `region`.
+                              country:
+                                type: string
+                                description: Name of `country`.
+                              link:
+                                type: string
+                                description: Linkage type.
+                        actorHandle:
+                          type: string
+                          description: Actor's handle
+                        actorSubjectOfReport:
+                          type: array
+                          description: List of actors mentioned in report subject.
+                          items:
+                            type: object
+                            required:
+                              - handle
+                            properties:
+                              handle:
+                                type: string
+                                description: Actor `handle`.
+                              aliases:
+                                type: array
+                                description: Actor `aliases` (also known as).
+                                items:
+                                  type: string
+                        reportAttachments:
+                          type: array
+                          description: List of report attachments.
+                          items:
+                            type: object
+                            required:
+                              - fileName
+                              - url
+                              - fileSize
+                              - mimeType
+                            properties:
+                              fileName:
+                                type: string
+                                description: Attachment file's name.
+                              url:
+                                type: string
+                                description: "`Url` to download attachment."
+                              fileSize:
+                                type: integer
+                                description: Attachment file size in bytes.
+                              mimeType:
+                                type: string
+                                description: Mime type.
+                              description:
+                                type: string
+                                description: A `description` of attachment.
+                              malicious:
+                                type: boolean
+                                description: Indicates if attachment is `malicious`. If malicious=`true`, attachment will be an archive with password `infected`.
+                        victims:
+                          type: array
+                          description: Purported victims list.
+                          items:
+                            type: object
+                            required:
+                              - name
+                            properties:
+                              name:
+                                type: string
+                                description: Purported victim `name`.
+                              urls:
+                                type: array
+                                description: List of purported victim's `urls`.
+                                items:
+                                  type: string
+                        sensitiveSource:
+                          type: boolean
+                          description: Indicates if the document contains sensitive source derived information.
+                        sources:
+                          type: array
+                          description: List of `sources`.
+                          items:
+                            type: object
+                            required:
+                              - url
+                              - title
+                              - index
+                            properties:
+                              url:
+                                type: string
+                                description: "`Url` to resource where the report information came from."
+                              title:
+                                type: string
+                                description: Source `title`.
+                              index:
+                                type: integer
+                                description: Numerical value that the source is denoted by in the text of the report.
+                              type:
+                                type: string
+                                description: "`Type` of source such as Thread Post, Information Report, etc."
+                        classification:
+                          type: object
+                          description: Classification of reports.
+                          properties:
+                            intelRequirements:
+                              type: array
+                              description: General Intel Requirements (GIR).
+                              items:
+                                type: string
+        '401':
+          description: Unauthorized
+        '412':
+          description: Precondition Failed
