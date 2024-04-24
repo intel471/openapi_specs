@@ -353,11 +353,11 @@ paths:
                         activeFrom:
                           type: integer
                           format: int64
-                          description: Date first seen.
+                          description: Date first seen. Represented as milliseconds since the epoch.
                         activeUntil:
                           type: integer
                           format: int64
-                          description: Date last seen.
+                          description: Date last seen. Represented as milliseconds since the epoch.
                         lastUpdated:
                           type: integer
                           format: int64
