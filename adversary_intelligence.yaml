@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Titan API v1
-  description: Threat actors lookup API. Returns information about threat actors, associated reports and underground forum activity.
+  description: Adversary intelligence lookup API. Returns information about threat actors, associated reports and underground forum activity.
   version: 1.19.7
 servers:
   - url: https://api.intel471.com/v1
