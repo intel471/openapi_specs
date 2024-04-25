@@ -353,15 +353,15 @@ paths:
                         activeFrom:
                           type: integer
                           format: int64
-                          description: Date first seen. Represented as milliseconds since the epoch.
+                          description: Date first seen. Represented as milliseconds since the epoch. Please convert to human readable format.
                         activeUntil:
                           type: integer
                           format: int64
-                          description: Date last seen. Represented as milliseconds since the epoch.
+                          description: Date last seen. Represented as milliseconds since the epoch. Please convert to human readable format.
                         lastUpdated:
                           type: integer
                           format: int64
-                          description: Last modification date.
+                          description: Last modification date. Represented as milliseconds since the epoch. Please convert to human readable format.
 
         '401':
           description: Unauthorized
@@ -437,11 +437,11 @@ paths:
                         lastUpdated:
                           type: integer
                           format: int64
-                          description: Last modification date as Epoch Time.
+                          description: Last modification date. Represented as milliseconds since the epoch. Please convert to human readable format.
                         dateOfInformation:
                           type: integer
                           format: int64
-                          description: Date of information as Epoch Time.
+                          description: Date of information. Represented as milliseconds since the epoch. Please convert to human readable format.
                         sourceCharacterization:
                           type: string
                           description: Source characterization.
