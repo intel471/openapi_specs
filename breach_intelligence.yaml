@@ -1,0 +1,254 @@
+openapi: 3.0.3
+info:
+  title: Titan API v1
+  version: 1.20.0
+  description: Breach alerts lookup API.
+servers:
+  - url: https://api.intel471.com/v1
+    description: Production server.
+paths:
+  /breachAlerts:
+    get:
+      summary: Search Breach Alerts
+      operationId: Search Breach Alerts
+      description: Get a list of Breach Alerts matching filter criteria.
+      parameters:
+        - name: breachAlert
+          in: query
+          schema:
+            type: string
+          example: Communications
+          required: false
+          description: Free text Breach Alerts search - all fields included. At least one of `breachAlert`, `actor`, `victim` is required.
+        - name: actor
+          in: query
+          required: false
+          schema:
+            type: string
+          example: hakkr
+          description: Search by actor or actor group name. At least one of `breachAlert`, `actor`, `victim` is required.
+        - name: victim
+          in: query
+          required: false
+          schema:
+            type: string
+          example: BCN Telecom
+          description: Search by victim name. At least one of `breachAlert`, `actor`, `victim` is required.
+        - name: confidence
+          in: query
+          schema:
+            type: string
+          description: Search by confidence level.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - breach_alerts_total_count
+                properties:
+                  breach_alerts_total_count:
+                    type: integer
+                    description: Total count of matched Breach Alerts.
+                  partial_result:
+                    type: boolean
+                    description: Indicates whether response contains partial result. It could be in case when request took too long and was terminated by timeout.
+                  breach_alerts:
+                    type: array
+                    description: List of `Breach Alerts`.
+                    items:
+                      type: object
+                      required:
+                        - uid
+                        - data
+                        - last_updated
+                        - activity
+                      properties:
+                        activity:
+                          type: object
+                          required:
+                            - first
+                            - last
+                          description: Activity range for the Breach Alert.
+                          properties:
+                            first:
+                              type: integer
+                              format: int64
+                              description: Start time of the Breach Alert activity range. Represented as milliseconds since the epoch. Please convert to human readable format.
+                            last:
+                              type: integer
+                              format: int64
+                              description: End time of the Breach Alert activity range. Represented as milliseconds since the epoch. Please convert to human readable format.
+                        last_updated:
+                          type: integer
+                          format: int64
+                          description: Last updated time of the Breach Alert. Represented as milliseconds since the epoch. Please convert to human readable format.
+                        uid:
+                          type: string
+                          description: Breach Alert's unique identifier.
+                        data:
+                          type: object
+                          description: Sub-document containing Breach Alert and its associated entities.
+                          required:
+                            - breach_alert
+                          properties:
+                            breach_alert:
+                              type: object
+                              description: Sub-document containing Breach Alert information.
+                              required:
+                                - title
+                                - date_of_information
+                                - released_at
+                                - confidence
+                                - actor_or_group
+                                - victim
+                              properties:
+                                title:
+                                  type: string
+                                  description: Title of the Breach Alert.
+                                summary:
+                                  type: string
+                                  description: Summary of the Breach Alert.
+                                released_at:
+                                  type: integer
+                                  format: int64
+                                  description: Release time of the Breach Alert. Represented as milliseconds since the epoch. Please convert to human readable format.
+                                confidence:
+                                  type: object
+                                  description: "Confidence level of the Breach Alert: `high` — recommended to engage immediate countermeasures, `medium` — for potential threat alerting and double-checking systems, `low` — needs to be verified."
+                                  required:
+                                    - level
+                                    - description
+                                  properties:
+                                    level:
+                                      type: string
+                                      description: Confidence level of the Breach Alert.
+                                      enum:
+                                        - low
+                                        - medium
+                                        - high
+                                    description:
+                                      type: string
+                                      description: Description for the actual confidence level.
+                                sensitive_source:
+                                  type: boolean
+                                  description: Indicates if the Breach Alert contains sensitive source derived information.
+                                victim:
+                                  type: object
+                                  description: Purported victim of the Breach Alert.
+                                  required:
+                                    - name
+                                    - urls
+                                    - industries
+                                    - revenue
+                                    - region
+                                  properties:
+                                    name:
+                                      type: string
+                                      description: Name of the purported victim of the Breach Alert.
+                                    urls:
+                                      type: array
+                                      description: List of URLs for the purported victim of the Breach Alert.
+                                      items:
+                                        type: string
+                                    industries:
+                                      type: array
+                                      description: Industries associated with the purported victim of the Breach Alert.
+                                      items:
+                                        type: object
+                                        required:
+                                          - industry
+                                          - sector
+                                        properties:
+                                          industry:
+                                            type: string
+                                            description: Industry associated with the purported victim of the Breach Alert.
+                                          sector:
+                                            type: string
+                                            description: Sector associated with the purported victim of the Breach Alert.
+                                    revenue:
+                                      type: string
+                                      description: Revenue of the purported victim of the Breach Alert.
+                                    region:
+                                      type: string
+                                      description: Region of the purported victim of the Breach Alert.
+                                    country:
+                                      type: string
+                                      description: Country of the purported victim of the Breach Alert.
+                                date_of_information:
+                                  type: integer
+                                  format: int64
+                                  description: Time of the information contained in the Breach Alert. Represented as milliseconds since the epoch. Please convert to human readable format.
+                                actor_or_group:
+                                  type: string
+                                  description: Name of the actor or the actor group responsible for the Breach.
+                                intel_requirements:
+                                  type: array
+                                  description: General Intel Requirements (GIRs).
+                                  items:
+                                    type: string
+                                sources:
+                                  type: array
+                                  description: Sources for this alert, either from Intel 471 or external resources.
+                                  items:
+                                    type: object
+                                    required:
+                                      - type
+                                      - title
+                                      - url
+                                      - date
+                                      - source_type
+                                    properties:
+                                      type:
+                                        type: string
+                                        description: Source type, external or internal.
+                                        enum:
+                                          - internal
+                                          - external
+                                      title:
+                                        type: string
+                                        description: The title of the source.
+                                      url:
+                                        type: string
+                                        description: Link to the source, an absolute URL.
+                                      date:
+                                        type: integer
+                                        description: Date of source publication or information acquisition. Represented as milliseconds since the epoch. Please convert to human readable format.
+                                      source_type:
+                                        type: string
+                                        description: Description of source information's type.
+                            entities:
+                              type: array
+                              description: List of entities associated with the Breach Alert.
+                              items:
+                                type: object
+                                required:
+                                  - type
+                                  - value
+                                properties:
+                                  type:
+                                    type: string
+                                    description: Entity type.
+                                  value:
+                                    type: string
+                                    description: Entity value.
+                                  description:
+                                    type: string
+                                    description: Elaboration on the entity's value.
+                                  geo_info:
+                                    type: object
+                                    description: Optional field, present only for `IP Address` entities. Contains the registered geolocation for the IP address from `value` field, if any available.
+                                    required:
+                                      - provider
+                                      - country
+                                    properties:
+                                      provider:
+                                        type: string
+                                        description: Registrant for the IP address.
+                                      country:
+                                        type: string
+                                        description: Country of the IP's registration.
+        '412':
+          description: Precondition Failed
