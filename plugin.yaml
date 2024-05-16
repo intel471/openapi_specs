@@ -1,0 +1,24 @@
+Descriptor:
+  Name: Intel 471 Threat Intelligence Lookup
+  DisplayName: Intel 471 Threat Intelligence
+  Description: Skills for looking up threat intelligence on malware indicators (IPs, URLs and file hashes), vulnerabilities (CVE) and threat actors, using Intel 471 API.
+  Icon: https://raw.githubusercontent.com/intel471/openapi_specs/master/owl1.png
+  SupportedAuthTypes:
+    - Basic
+
+SkillGroups:
+  - Format: API
+    Settings:
+      OpenApiSpecUrl: https://raw.githubusercontent.com/intel471/openapi_specs/master/malware_intelligence.yaml
+    Skill:
+      Description: Skill for looking up threat information about IPs, URLs and file hashes using Intel 471 malware intelligence API
+  - Format: API
+    Settings:
+      OpenApiSpecUrl: https://raw.githubusercontent.com/intel471/openapi_specs/master/vulnerability_intelligence.yaml
+    Skill:
+      Description: Skill for looking up threat intelligence information about vulnerabilities (CVEs) using Intel 471 vulnerability intelligence API
+  - Format: API
+    Settings:
+      OpenApiSpecUrl: https://raw.githubusercontent.com/intel471/openapi_specs/master/adversary_intelligence.yaml
+    Skill:
+      Description: Skill for looking up adversary intelligence information about threat actors, associated reports and underground forum activity.
