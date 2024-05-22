@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
   title: Titan API v1
   description: Adversary intelligence lookup API. Returns information about threat actors, associated reports and underground forum activity.
@@ -11,7 +11,9 @@ paths:
     get:
       operationId: Search Threat Actors
       summary: Search Threat Actors
-      description: "Get a list of threat actors, associated reports and underground forum activity matching filter criteria"
+      description: |
+        Get a list of threat actors, associated reports and underground forum activity matching filter criteria
+        #ExamplePrompt Find information regarding threat actor with handle. Use Intel 471 plugin.
       parameters:
         - name: actor
           in: query
@@ -371,7 +373,9 @@ paths:
     get:
       operationId: Search Threat Actors in Reports
       summary: Search Threat Actors in Reports
-      description: Get a list of Information or FINTEL reports discussing threat actor's activity
+      description: |
+        Get a list of Information or FINTEL reports discussing threat actor's activity
+        #ExamplePrompt Find reports discussing threat actor with handle. Use Intel 471 plugin.
       parameters:
         - name: report
           in: query
