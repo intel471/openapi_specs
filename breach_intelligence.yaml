@@ -9,8 +9,8 @@ servers:
 paths:
   /breachAlerts:
     get:
-      summary: Search Breach Alerts
-      operationId: Search Breach Alerts
+      operationId: SearchBreachAlerts
+      displayName: Search breach alerts
       description: |
         Get a list of Breach Alerts matching filter criteria.
         #ExamplePrompt Find a breach alert for victim
