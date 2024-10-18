@@ -9,11 +9,11 @@ servers:
 paths:
   /actors:
     get:
-      operationId: Search Threat Actors
-      summary: Search Threat Actors
+      operationId: SearchThreatActors
+      displayName: Search threat actors
       description: |
-        Get a list of threat actors, associated reports and underground forum activity matching filter criteria
-        #ExamplePrompt Find information regarding threat actor with handle. Use Intel 471 plugin.
+        Get a list of threat actors, associated reports and underground forum activity.
+        #ExamplePrompt Find information regarding threat actor with handle. Use Intel 471 plugin
       parameters:
         - name: actor
           in: query
@@ -371,11 +371,11 @@ paths:
           description: Precondition Failed
   /reports:
     get:
-      operationId: Search Threat Actors in Reports
-      summary: Search Threat Actors in Reports
+      operationId: SearchThreatActorsInReports
+      displayName: Search threat actors in reports
       description: |
-        Get a list of Information or FINTEL reports discussing threat actor's activity
-        #ExamplePrompt Find reports discussing threat actor with handle. Use Intel 471 plugin.
+        Get a list of Information or FINTEL reports discussing threat actor's activity.
+        #ExamplePrompt Find reports discussing threat actor with handle. Use Intel 471 plugin
       parameters:
         - name: report
           in: query
